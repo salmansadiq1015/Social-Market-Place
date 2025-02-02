@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Market Place Activation Email</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            background: #fc00ed;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 1.4rem;
+        }
+
+        p {
+            font-size: 1rem;
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .button {
+            display: inline-block;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            padding: 12px 25px;
+            margin: 20px 0;
+            background-color: #fc00ed;
+            color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #e000d1;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px 0;
+            border-top: 1px solid #eaeaea;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .footer a {
+            color: #fc00ed;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Social Market Place!</h1>
+        </div>
+        <h2>Dear <%= user.name %>,</h2>
+        <p>Thank you for joining our community! To activate your account, please click the button below:</p>
+        <a class="button" href="#">Activate Your Account</a>
+        <p>If the button above doesn't work, you can copy and paste the following activation code into the platform:</p>
+        <p style="font-weight: bold; font-size: 1.1rem;">Activation Code: <%= activationCode %></p>
+        <p>Please note that this activation code is valid for only 5 minutes for security reasons.</p>
+        <p>If you did not sign up for our service, you can safely ignore this email.</p>
+        <p>Need help? Feel free to contact our support team at <a href="mailto:support@socialface.com">support@socialmarket.com</a>.</p>
+        <div class="footer">
+            <p>Best regards,<br>The Social Market Place Platform Team</p>
+        </div>
+    </div>
+</body>
+
+</html>
