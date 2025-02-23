@@ -33,7 +33,7 @@ app.use("/api/v1/auth", authRoutes);
 
 // Rest API
 app.use("/", (req, res) => {
-  res.sendFile(
+  res.send(
     `<h1>Welcome to Social Market Place, Server is running... </h1>`
   );
 });
