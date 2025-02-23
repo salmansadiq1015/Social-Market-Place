@@ -30,7 +30,7 @@
 
 *::-webkit-scrollbar-thumb {
   width: 0.1rem;
-  background: #fc00ed;
+  background: orangered;
   border-radius: 1rem;
 }
 *::-webkit-scrollbar {
@@ -43,7 +43,7 @@
 }
 
 .tgradient {
-  background: linear-gradient(to right, #fc00ed, #ff34f1);
+  background: linear-gradient(to right, orangered, orange);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -51,7 +51,7 @@
 }
 
 .bgGradient {
-  background: linear-gradient(to right, #fc00ed, #ed26e0);
+  background: linear-gradient(to right, orangered, orange);
 }
 
 /* Input Number */

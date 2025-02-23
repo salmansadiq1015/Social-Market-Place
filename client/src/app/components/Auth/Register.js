@@ -1,0 +1,309 @@
+"use client";
+import axios from "axios";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { FaRegUser } from "react-icons/fa";
+import { MdOutlineAttachEmail } from "react-icons/md";
+import { TbPasswordUser } from "react-icons/tb";
+import { IoMdEyeOff } from "react-icons/io";
+import { IoEye } from "react-icons/io5";
+import { FcGoogle } from "react-icons/fc";
+import { AiFillGithub } from "react-icons/ai";
+import { BiLoaderCircle } from "react-icons/bi";
+import { IoClose } from "react-icons/io5";
+import { useAuth } from "@/app/context/authContext";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { CommonStyle } from "@/app/utils/CommonStyle";
+import { useTheme } from "next-themes";
+
+export default function Register({ setActive }) {
+  const { auth, setAuth } = useAuth();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [image, setImage] = useState("");
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isAvatar, setIsAvatar] = useState(false);
+  const { setActivationToken } = useAuth();
+  const { data: sessionData } = useSession();
+  const router = useRouter();
+  const { theme } = useTheme();
+
+  const handleRegsiter = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formdata = {
+        firstName,
+        lastName,
+        email,
+        password,
+        profilePicture: image,
+      };
+
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/v1/auth/register`,
+        formdata
+      );
+      if (data) {
+        console.log(data);
+        setActivationToken(data.activationToken);
+        toast.success(data.message || "Registration Successful!");
+        setActive("verification");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const avatars = [
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153478512",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153573105",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153613401",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153655218",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153691010",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153737044",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153772964",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153802309",
+    "https://socialface.s3.eu-north-1.amazonaws.com/1721153826601",
+  ];
+
+  // <-------------Social Auth---------->
+  const handleSocialAuth = async () => {
+    if (!sessionData) return;
+
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/v1/auth/social`,
+        {
+          email: sessionData.user.email,
+          firstName: sessionData.user.name,
+          profilePicture: sessionData.user.image,
+        }
+      );
+
+      if (data) {
+        router.push("/");
+        setAuth({ ...auth, user: data.user, token: data.token });
+        localStorage.setItem("auth", JSON.stringify(data));
+        toast.success(data.message || "Login Successfully!");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Social login failed.");
+    }
+  };
+
+  useEffect(() => {
+    if (sessionData && !localStorage.getItem("auth")) {
+      handleSocialAuth();
+    }
+    // eslint-disable-next-line
+  }, [sessionData]);
+  return (
+    <div className="w-full min-h-screen flex items-center justify-center py-4 px-4">
+      <div
+        className={`w-full py-4 px-2 sm:px-4  shadow-md ${
+          theme === "dark"
+            ? "bg-slate-950 text-white"
+            : "bg-gray-100 text-black"
+        }  rounded-md`}
+      >
+        <form onSubmit={handleRegsiter} className="">
+          <div className="flex items-center justify-center flex-col gap-2 w-full">
+            {/* <Image src="/Sociallogo3.png" alt="Logo" width={60} height={60} /> */}
+            <h2 className=" hidden sm:block text-2xl sm:text-3xl font-semibold text-center">
+              Welcome to <span className="tgradient">Social Markets</span>
+            </h2>
+            <div className="flex flex-col gap-4 mt-2 sm:mt-4 w-full ">
+              {/* Avatar */}
+              <div className=" relative w-full">
+                {/* Default Avatar */}
+                {isAvatar && (
+                  <div
+                    className={`sm:absolute fixed top-[3rem] right-[1rem] sm:right-[6rem] z-[99] ${
+                      theme === "dark"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-black"
+                    }   rounded-md w-[16rem] shadow-md border border-gray-400 py-3 px-4`}
+                  >
+                    <span
+                      onClick={() => setIsAvatar(false)}
+                      className="w-full flex items-center justify-end"
+                    >
+                      <IoClose className="h-5 w-5 cursor-pointer" />
+                    </span>
+                    <div className="grid grid-cols-3 gap-4">
+                      {avatars &&
+                        avatars.map((item, i) => (
+                          <div
+                            className={`w-[3rem] h-[3rem] rounded-full overflow-hidden ${
+                              image === item && "border-2 border-orange-600"
+                            }`}
+                            key={i}
+                            onClick={() => {
+                              setImage(item), setIsAvatar(false);
+                            }}
+                          >
+                            <Image
+                              src={item}
+                              alt="avatar"
+                              layout="responsive"
+                              width={49}
+                              height={49}
+                              className="rounded-full"
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/*  */}
+                <div
+                  className="relative w-[3rem] h-[3rem] p-1 rounded-full border overflow-hidden cursor-default border-orange-500"
+                  onClick={() => setIsAvatar(true)}
+                >
+                  <Image
+                    src={!image ? "/profile.png" : image}
+                    alt="avatar"
+                    fill
+                    className="h-[3rem] w-[3rem] "
+                  />
+                </div>
+                <input
+                  type="file"
+                  onChange={(e) => setImage(e.target.files[0])}
+                  className="hidden"
+                  id="avatar"
+                />
+              </div>
+              <div className="flex items-center  flex-col sm:flex-row w-full gap-4">
+                <div className="relative w-full">
+                  <FaRegUser className="absolute top-[.6rem] left-2 h-5 w-5  z-10  " />
+                  <input
+                    type="text"
+                    placeholder="First name"
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className={`${CommonStyle.input} pl-8`}
+                  />
+                </div>
+
+                <div className="relative w-full">
+                  <FaRegUser className="absolute top-[.6rem] left-2 h-5 w-5  z-10  " />
+                  <input
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className={`${CommonStyle.input} pl-8`}
+                  />
+                </div>
+              </div>
+              <div className="relative w-full">
+                <MdOutlineAttachEmail className="absolute top-[.7rem] left-2 h-5 w-5  z-10  " />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`${CommonStyle.input} pl-8`}
+                />
+              </div>
+
+              <div className="relative w-full">
+                <span
+                  className="absolute top-[.5rem] right-2 cursor-pointer  z-10  "
+                  onClick={() => setShow(!show)}
+                >
+                  {!show ? (
+                    <IoMdEyeOff className="h-6 w-6" />
+                  ) : (
+                    <IoEye className="h-6 w-6" />
+                  )}
+                </span>
+
+                <TbPasswordUser className="absolute top-[.7rem] left-2 h-5 w-5 z-10 " />
+
+                <input
+                  type={show ? "text" : "password"}
+                  placeholder="Password"
+                  required
+                  value={password}
+                  minLength={8}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`${CommonStyle.input} pl-8`}
+                />
+              </div>
+              {/* Button */}
+              <div className="flex items-center justify-center w-full px-2 sm:px-[2rem]">
+                <button
+                  type="submit"
+                  className={`${CommonStyle.button2} w-full sm:w-[70%]`}
+                >
+                  {loading ? (
+                    <BiLoaderCircle className="h-5 w-5 text-white animate-spin" />
+                  ) : (
+                    "Register"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div className="flex flex-col gap-4 mt-4">
+          <div className="flex items-center justify-center gap-4">
+            <span className=" w-[7rem] sm:w-full h-[2px] bg-gray-300 rounded-lg" />
+            <h6 className="w-full text-center">Or Register with</h6>
+            <span className="w-[7rem] sm:w-full  h-[2px] bg-gray-300 rounded-lg" />
+          </div>
+          {/* Social Auth */}
+          <div className="flex items-center justify-center gap-4 sm:gap-8 w-full px-2 sm:px-[2rem]">
+            <button
+              onClick={() => signIn("google")}
+              className="py-1 px-5  rounded-[2rem] bg-orange-600/10 hover:bg-orange-600/20 transition-all duration-200 flex items-center justify-center gap-1 "
+            >
+              <FcGoogle
+                size="30"
+                className="cursor-pointer filter hover:drop-shadow-lg "
+              />
+              Google
+            </button>
+            <button
+              onClick={() => signIn("github")}
+              className="py-1 px-5  rounded-[2rem] bg-orange-600/10 hover:bg-orange-600/20 transition-all duration-200 flex items-center justify-center gap-1 "
+            >
+              <AiFillGithub
+                size="30"
+                className={`cursor-pointer ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }  filter hover:drop-shadow-lg`}
+              />
+              Google
+            </button>
+          </div>
+          {/* No account */}
+          <div className="flex items-center justify-center mt-1 gap-2">
+            <span className="text-base ">Already have an account?</span>
+            <span
+              className="text-lg font-medium text-orange-500 hover:text-orange-600 cursor-pointer"
+              onClick={() => setActive("login")}
+            >
+              Login
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

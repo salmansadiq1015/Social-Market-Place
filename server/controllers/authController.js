@@ -111,12 +111,21 @@ export const verificationUser = async (req, res) => {
     }
 
     const newUser = jwt.verify(activation_token, process.env.JWT_SECRET);
+    if (!newUser) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid activation token or expired!",
+      });
+    }
     if (newUser.activationCode !== activation_code) {
       return res.status({
         success: false,
         message: "Invalid activation code!",
       });
     }
+
+    console.log("newUser:", newUser);
+
     const { firstName, lastName, email, password, profilePicture } =
       newUser.user;
 
@@ -316,7 +325,7 @@ export const updateAccessToken = async (req, res) => {
   }
 };
 
-// Get All Users
+// Get All Users - Admin
 export const getAllUsers = async (req, res) => {
   try {
     const users = await userModel
