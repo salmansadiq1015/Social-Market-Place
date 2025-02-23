@@ -110,7 +110,7 @@ export default function Header() {
   const { theme } = useTheme();
   const closeAuth = useRef(null);
 
-  console.log("user", auth.user.profilePicture);
+  // console.log("user", auth.user?.profilePicture);
 
   // Close Auth to click any where
   useEffect(() => {
@@ -250,11 +250,7 @@ export default function Header() {
                 className="hidden lg:flex w-[2.8rem] relative h-[2.8rem] border-orange-500 border rounded-full overflow-hidden cursor-pointer"
               >
                 <Image
-                  src={
-                    auth.user?.profilePicture
-                      ? auth.user?.profilePicture
-                      : "/profile.png"
-                  }
+                  src={auth.user?.profilePicture || "/profile.png"}
                   alt="avatar"
                   layout="fill"
                   objectFit="cover"
@@ -285,11 +281,7 @@ export default function Header() {
             {auth.user ? (
               <div className="w-[3rem] relative h-[3rem] rounded-full overflow-hidden cursor-pointer">
                 <Image
-                  src={
-                    auth.user?.profilePicture
-                      ? auth.user?.profilePicture
-                      : "/profile.png"
-                  }
+                  src={auth.user?.profilePicture || "/profile.png"}
                   alt="avatar"
                   layout="fill"
                   objectFit="cover"
